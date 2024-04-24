@@ -36,7 +36,10 @@ def backup_view(req):
 
     # Create the .tar.gz file
     with tarfile.open(output_filename, "w:gz") as tar:
-        tar.add(backup_dir, arcname=os.path.basename(backup_dir))
+        for item in os.listdir(settings.MEDIA_ROOT):
+            if item != "lost+found":  # Exclude lost+found directory
+                full_path = os.path.join(settings.MEDIA_ROOT, item)
+                tar.add(full_path, arcname=os.path.basename(full_path))
 
     # Calculate file size in GB
     file_size = os.path.getsize(output_filename) / (1024 * 1024 * 1024)
